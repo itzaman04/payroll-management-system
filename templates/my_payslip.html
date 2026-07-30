@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}My Payslip{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h3 class="mb-4">Payslip — {{ name }}</h3>
+                <table class="table">
+                    <tr><td>Attendance</td><td>{{ attendance_percent }}%</td></tr>
+                    <tr><td>Base Salary</td><td>₹{{ "%.2f"|format(base_salary) }}</td></tr>
+                    <tr><td class="text-danger">Deduction</td><td class="text-danger">-₹{{ "%.2f"|format(deduction) }}</td></tr>
+                    <tr><td class="text-success">Bonus</td><td class="text-success">+₹{{ "%.2f"|format(bonus) }}</td></tr>
+                    <tr class="table-active"><td><strong>Net Salary</strong></td><td><strong>₹{{ "%.2f"|format(net_salary) }}</strong></td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h2 class="mb-4">Welcome, {{ session.name }} 👋</h2>
+
+{% if session.role == 'admin' %}
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="card text-bg-primary shadow-sm">
+            <div class="card-body">
+                <h6>Total Employees</h6>
+                <h2>{{ total_employees }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-bg-success shadow-sm">
+            <div class="card-body">
+                <h6>Managers</h6>
+                <h2>{{ total_managers }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-bg-warning shadow-sm">
+            <div class="card-body">
+                <h6>Total Monthly Base Payroll</h6>
+                <h2>₹{{ "%.2f"|format(total_payroll) }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4">
+    <a href="{{ url_for('add_employee') }}" class="btn btn-primary">+ Add Employee</a>
+    <a href="{{ url_for('attendance') }}" class="btn btn-outline-secondary">Mark Attendance</a>
+    <a href="{{ url_for('payroll') }}" class="btn btn-outline-secondary">View Payroll</a>
+</div>
+{% else %}
+<p>Check your salary breakdown anytime.</p>
+<a href="{{ url_for('my_payslip') }}" class="btn btn-primary">View My Payslip</a>
+{% endif %}
+{% endblock %}
