@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Edit Employee{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h3 class="mb-4">Edit Employee</h3>
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" name="name" class="form-control" value="{{ employee.name }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" value="{{ employee.email }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">New Password <span class="text-muted">(leave blank to keep current)</span></label>
+                        <input type="text" name="password" class="form-control" placeholder="••••••••">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Department</label>
+                        <input type="text" name="department" class="form-control" value="{{ employee.department }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Role</label>
+                        <select name="role" class="form-select" id="roleSelect" onchange="toggleTeamSize()" required>
+                            <option value="employee" {% if employee.role == 'employee' %}selected{% endif %}>Employee</option>
+                            <option value="manager" {% if employee.role == 'manager' %}selected{% endif %}>Manager</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Base Salary (₹/month)</label>
+                        <input type="number" step="0.01" name="base_salary" class="form-control" value="{{ employee.base_salary }}" required>
+                    </div>
+                    <div class="mb-3" id="teamSizeField" style="{% if employee.role != 'manager' %}display:none;{% endif %}">
+                        <label class="form-label">Team Size (managers only)</label>
+                        <input type="number" name="team_size" class="form-control" value="{{ employee.team_size or 0 }}">
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Save Changes</button>
+                    <a href="{{ url_for('employees') }}" class="btn btn-outline-secondary w-100 mt-2">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleTeamSize() {
+    const role = document.getElementById('roleSelect').value;
+    document.getElementById('teamSizeField').style.display = role === 'manager' ? 'block' : 'none';
+}
+</script>
+{% endblock %}

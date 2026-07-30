@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h2 class="mb-4">Welcome, {{ session.name }} 👋</h2>
+
+{% if session.role == 'admin' %}
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card text-bg-primary shadow-sm h-100">
+            <div class="card-body">
+                <div class="fs-4">👨</div>
+                <h6 class="mb-1">Employees</h6>
+                <h3>{{ total_employees }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-bg-success shadow-sm h-100">
+            <div class="card-body">
+                <div class="fs-4">👔</div>
+                <h6 class="mb-1">Managers</h6>
+                <h3>{{ total_managers }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-bg-warning shadow-sm h-100">
+            <div class="card-body">
+                <div class="fs-4">💰</div>
+                <h6 class="mb-1">Total Payroll</h6>
+                <h3>₹{{ "{:,.0f}".format(total_payroll) }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-bg-info shadow-sm h-100">
+            <div class="card-body">
+                <div class="fs-4">📅</div>
+                <h6 class="mb-1">Attendance Today</h6>
+                <h3>{{ attendance_today_percent }}%</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-bg-secondary shadow-sm h-100">
+            <div class="card-body">
+                <div class="fs-4">🏢</div>
+                <h6 class="mb-1">Departments</h6>
+                <h3>{{ total_departments }}</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mb-4">
+    <a href="{{ url_for('add_employee') }}" class="btn btn-primary">+ Add Employee</a>
+    <a href="{{ url_for('attendance') }}" class="btn btn-outline-secondary">Mark Attendance</a>
+    <a href="{{ url_for('payroll') }}" class="btn btn-outline-secondary">View Payroll</a>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6 class="card-title">Employees by Department</h6>
+                <canvas id="deptChart" height="220"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6 class="card-title">Attendance Today</h6>
+                <canvas id="attendanceChart" height="220"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6 class="card-title">Payroll Distribution (Top 10)</h6>
+                <canvas id="payrollChart" height="220"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+new Chart(document.getElementById('deptChart'), {
+    type: 'pie',
+    data: {
+        labels: {{ dept_labels | tojson }},
+        datasets: [{
+            data: {{ dept_counts | tojson }},
+            backgroundColor: ['#89b4fa','#a6e3a1','#f9e2af','#f38ba8','#cba6f7','#fab387','#94e2d5']
+        }]
+    },
+    options: { plugins: { legend: { position: 'bottom' } } }
+});
+
+new Chart(document.getElementById('attendanceChart'), {
+    type: 'doughnut',
+    data: {
+        labels: ['Present', 'Absent'],
+        datasets: [{
+            data: [{{ present_today }}, {{ absent_today }}],
+            backgroundColor: ['#a6e3a1', '#f38ba8']
+        }]
+    },
+    options: { plugins: { legend: { position: 'bottom' } } }
+});
+
+new Chart(document.getElementById('payrollChart'), {
+    type: 'bar',
+    data: {
+        labels: {{ payroll_labels | tojson }},
+        datasets: [{
+            label: 'Base Salary (₹)',
+            data: {{ payroll_values | tojson }},
+            backgroundColor: '#89b4fa'
+        }]
+    },
+    options: {
+        plugins: { legend: { display: false } },
+        scales: { x: { ticks: { autoSkip: false, maxRotation: 60, minRotation: 30 } } }
+    }
+});
+</script>
+
+{% else %}
+<p>Check your salary breakdown anytime.</p>
+<a href="{{ url_for('my_payslip') }}" class="btn btn-primary">View My Payslip</a>
+{% endif %}
+{% endblock %}
